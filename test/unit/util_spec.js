@@ -40,6 +40,11 @@ describe('util', function() {
       expect(stringToPDFString(str)).toEqual('string');
     });
 
+    it('handles UTF-16LE strings', function() {
+      var str = '\xFF\xFE\x73\x00\x74\x00\x72\x00\x69\x00\x6E\x00\x67\x00';
+      expect(stringToPDFString(str)).toEqual('string');
+    });
+
     it('handles empty strings', function() {
       // ISO Latin 1
       var str1 = '';

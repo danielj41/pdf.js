@@ -1075,13 +1075,22 @@ var PDFStringTranslateTable = [
   0x178, 0x17D, 0x131, 0x142, 0x153, 0x161, 0x17E, 0, 0x20AC
 ];
 
+function decodeUTF16Char(str, highIndex, lowIndex) {
+  return String.fromCharCode(
+    (str.charCodeAt(highIndex) << 8) | str.charCodeAt(lowIndex));
+}
+
 function stringToPDFString(str) {
   var i, n = str.length, strBuf = [];
   if (str[0] === '\xFE' && str[1] === '\xFF') {
     // UTF16BE BOM
     for (i = 2; i < n; i += 2) {
-      strBuf.push(String.fromCharCode(
-        (str.charCodeAt(i) << 8) | str.charCodeAt(i + 1)));
+      strBuf.push(decodeUTF16Char(str, i, i + 1));
+    }
+  } else if (str[0] === '\xFF' && str[1] === '\xFE') {
+    // UTF16LE BOM
+    for (i = 2; i < n; i += 2) {
+      strBuf.push(decodeUTF16Char(str, i + 1, i));
     }
   } else {
     for (i = 0; i < n; ++i) {
